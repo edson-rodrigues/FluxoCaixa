@@ -1,0 +1,6 @@
+@ConsolidadoWebAPI_HostAddress = http://localhost:5167
+
+GET {{ConsolidadoWebAPI_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
