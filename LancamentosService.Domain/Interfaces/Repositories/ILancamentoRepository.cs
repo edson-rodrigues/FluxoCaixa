@@ -14,7 +14,7 @@ namespace LancamentosService.Domain.Interfaces.Repositories
     {
         Task<(List<Lancamento>, int totalRecords)> GetLancamentos(DateTime? initialDate, DateTime? finalDate, int pageSize = 100, TipoLancamentoEnum? tipoLancamento = null, int page = 1);
         Task<Lancamento> GetLancamentoById(int id);
-        Task CreateLancamento(CreateLancamentoDTO lancamentoDTO);
+        Task<int> CreateLancamento(CreateLancamentoDTO lancamentoDTO);
 
     }
 }

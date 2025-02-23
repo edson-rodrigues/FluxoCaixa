@@ -21,12 +21,13 @@ namespace LancamentosService.Data.Repositories
             _mapper = mapper;
         }
 
-        public async Task CreateLancamento(CreateLancamentoDTO lancamentoDTO)
+        public async Task<int> CreateLancamento(CreateLancamentoDTO lancamentoDTO)
         {
             var lancamento = _mapper.Map<Lancamento>(lancamentoDTO);
             lancamento.DataCriacao = DateTime.Now;
             await db.Lancamentos.AddAsync(lancamento);
             await db.SaveChangesAsync();
+            return lancamento.Id;
         }
 
         public async Task<Lancamento> GetLancamentoById(int id)
