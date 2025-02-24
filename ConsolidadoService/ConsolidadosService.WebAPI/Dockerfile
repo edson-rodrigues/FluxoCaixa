@@ -10,6 +10,9 @@ FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
 COPY ["ConsolidadoService/ConsolidadosService.WebAPI/ConsolidadosService.WebAPI.csproj", "ConsolidadoService/ConsolidadosService.WebAPI/"]
+COPY ["ConsolidadoService/ConsolidadoService.Business/ConsolidadoService.Business.csproj", "ConsolidadoService/ConsolidadoService.Business/"]
+COPY ["ConsolidadoService/ConsolidadoService.Data/ConsolidadoService.Data.csproj", "ConsolidadoService/ConsolidadoService.Data/"]
+COPY ["ConsolidadoService/ConsolidadoService.Domain/ConsolidadoService.Domain.csproj", "ConsolidadoService/ConsolidadoService.Domain/"]
 RUN dotnet restore "./ConsolidadoService/ConsolidadosService.WebAPI/ConsolidadosService.WebAPI.csproj"
 COPY . .
 WORKDIR "/src/ConsolidadoService/ConsolidadosService.WebAPI"

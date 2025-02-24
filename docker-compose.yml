@@ -1,0 +1,86 @@
+version: '3.8'
+
+services:
+  # Serviço de Lançamentos
+  lancamento-service:
+    build:
+      context: .
+      dockerfile: LancamentosService/LancamentosWebAPI/Dockerfile
+    ports:
+      - "5000:80"
+    depends_on:
+      - sqlserver
+      - rabbitmq
+    environment:
+      - ConnectionStrings:DefaultConnection=Server=sqlserver;Database=fluxo_caixa;User Id=sa;Password=@Ejrg1994;
+      - RabbitMQ:HostName=rabbitmq
+      - RabbitMQ:UserName=guest
+      - RabbitMQ:Password=guest
+    networks:
+      - minha-rede
+
+  # Serviço de Consolidado
+  consolidado-service:
+    build:
+      context: .
+      dockerfile: ConsolidadoService/ConsolidadoWebAPI/Dockerfile
+    ports:
+      - "5001:80"
+    depends_on:
+      - redis
+      - rabbitmq
+    environment:
+      - Redis:ConnectionString=redis:6379
+      - RabbitMQ:HostName=rabbitmq
+      - RabbitMQ:UserName=guest
+      - RabbitMQ:Password=guest
+    networks:
+      - minha-rede
+
+  # SQL Server
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    ports:
+      - "1433:1433"
+    environment:
+      SA_PASSWORD: "@Ejrg1994"
+      ACCEPT_EULA: "Y"
+    volumes:
+      - sqlserver-data:/var/opt/mssql
+    networks:
+      - minha-rede
+
+  # Redis
+  redis:
+    image: redis:latest
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+    networks:
+      - minha-rede
+
+  # RabbitMQ
+  rabbitmq:
+    image: rabbitmq:3-management
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+    volumes:
+      - rabbitmq-data:/var/lib/rabbitmq
+    networks:
+      - minha-rede
+
+# Volumes para persistência de dados
+volumes:
+  sqlserver-data:
+  redis-data:
+  rabbitmq-data:
+
+# Rede personalizada
+networks:
+  minha-rede:
+    driver: bridge
