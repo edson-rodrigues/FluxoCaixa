@@ -47,8 +47,10 @@ services:
       ACCEPT_EULA: "Y"
     volumes:
       - sqlserver-data:/var/opt/mssql
+      - ./init-db.sql:/docker-entrypoint-initdb.d/init-db.sql
     networks:
       - minha-rede
+    restart: always
 
   # Redis
   redis:
