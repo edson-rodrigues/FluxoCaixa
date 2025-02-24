@@ -14,6 +14,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\LancamentosService.Domain\LancamentosService.Domain.csproj" />
+    <ProjectReference Include="..\LancamentosService\LancamentosService.MessageBroker\LancamentosService.MessageBroker.csproj" />
   </ItemGroup>
 
 </Project>

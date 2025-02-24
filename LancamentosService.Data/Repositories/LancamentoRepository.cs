@@ -4,6 +4,8 @@ using LancamentosService.Domain.DTO;
 using LancamentosService.Domain.Entities;
 using LancamentosService.Domain.Enums;
 using LancamentosService.Domain.Interfaces.Repositories;
+using LancamentosService.Domain.Interfaces.Services;
+using LancamentosService.MessageBroker.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -16,9 +18,11 @@ namespace LancamentosService.Data.Repositories
     public class LancamentoRepository : EFRepositoryBase<Lancamento>, ILancamentoRepository
     {
         private readonly IMapper _mapper;
-        public LancamentoRepository(AppDbContext context, IMapper mapper) : base(context)
+        private readonly IRabbitMQPublisher<Lancamento> _rabbitMQPublisher;
+        public LancamentoRepository(AppDbContext context, IMapper mapper, IRabbitMQPublisher<Lancamento> rabbitMQPublisher) : base(context)
         {
             _mapper = mapper;
+            _rabbitMQPublisher = rabbitMQPublisher;
         }
 
         public async Task<int> CreateLancamento(CreateLancamentoDTO lancamentoDTO)
@@ -27,6 +31,7 @@ namespace LancamentosService.Data.Repositories
             lancamento.DataCriacao = DateTime.Now;
             await db.Lancamentos.AddAsync(lancamento);
             await db.SaveChangesAsync();
+            await _rabbitMQPublisher.PublishMessageAsync(lancamento, "lancamentos");
             return lancamento.Id;
         }
 

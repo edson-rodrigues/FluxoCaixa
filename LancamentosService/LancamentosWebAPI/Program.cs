@@ -1,10 +1,16 @@
 using LancamentosService.Business;
 using LancamentosService.Data.Context;
+using LancamentosService.Domain.Interfaces.Services;
+using LancamentosService.Domain.Util;
 using LancamentosService.IoC;
+using LancamentosService.MessageBroker.Interfaces;
+using LancamentosService.MessageBroker;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Connections;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using RabbitMQ.Client;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -13,6 +19,8 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
 var configuration = builder.Configuration;
+builder.Services.Configure<RabbitMQSetting>(configuration.GetSection("RabbitMQ"));
+builder.Services.AddScoped(typeof(IRabbitMQPublisher<>), typeof(RabbitMQPublisher<>));
 builder.Services.RegisterServices(configuration);
 builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(typeof(Program).Assembly));
 builder.Services.AddApplicationServices();
@@ -20,6 +28,8 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 {
     options.UseSqlServer(configuration.GetConnectionString("DefaultConnection"));
 });
+
+
 
 //var jwtSettings = builder.Configuration.GetSection("JwtSettings");
 //var key = Encoding.UTF8.GetBytes(jwtSettings["Secret"]);

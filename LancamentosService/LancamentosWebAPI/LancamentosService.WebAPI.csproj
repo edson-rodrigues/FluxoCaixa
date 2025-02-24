@@ -18,6 +18,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\LancamentosService.Business\LancamentosService.Business.csproj" />
     <ProjectReference Include="..\..\LancamentosService.IoC\LancamentosService.IoC.csproj" />
+    <ProjectReference Include="..\LancamentosService.MessageBroker\LancamentosService.MessageBroker.csproj" />
   </ItemGroup>
 
 </Project>
